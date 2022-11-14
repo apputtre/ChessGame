@@ -16,7 +16,7 @@ typedef std::array<int, 2> position;
 class Piece
 {
 protected:
-	int row, col;
+	position pos;
 
 	bool is_white;
 	bool has_moved = false;
@@ -24,14 +24,13 @@ protected:
 public:
 	Piece(std::initializer_list<int> pos, bool is_white = true);
 
-	int getRow();
-	int getCol();
-	void setPos(std::initializer_list<int> params);
+	position getPos();
+	void setPos(std::initializer_list<int> pos);
 
 	bool isWhite();
 	bool hasMoved();
 
-	virtual vector<position> getMoves(vector<Piece> gameboard);
+	virtual vector<position> getMoves(vector<Piece> &gameboard);
 
-	static Piece pieceAt(vector<Piece> gameboard, position pos);
+	static bool pieceAt(vector<Piece> &gameboard, std::initializer_list<int> pos, Piece *piece);
 };

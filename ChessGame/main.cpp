@@ -8,17 +8,13 @@ int main()
 	Pawn p({ 1, 0 }, true);
 	gameboard.push_back(p);
 
-	std::cout << "Piece at " << p.getCol() << ", " << p.getRow() << "\n";
+	cout << p.getPos()[0] << ", " << p.getPos()[1] << "\n";
+	cout << &gameboard << "\n";
 
-	std::array<int, 5> arr = { 1, 2, 3, 4, 5 };
-	int to_find[1] = { 5 };
+	Piece* temp = NULL;
+	bool b = Piece::pieceAt(gameboard, { 1, 0 }, temp);
 
-	std::array<int, 5>::iterator it;
-	it = std::search(arr.begin(), arr.end(), to_find, to_find + 1);
-
-	cout << "found at " << *it << "\n";
-
-
+	cout << temp->getPos()[0] << "\n";
 
 	return 0;
 }

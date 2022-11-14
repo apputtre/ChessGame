@@ -2,25 +2,18 @@
 
 Piece::Piece(std::initializer_list<int> pos, bool is_white)
 {
-	col = *pos.begin();
-	row = *(pos.begin() + 1);
+	this->pos = { *pos.begin(), *(pos.begin() + 1) };
 	this->is_white = is_white;
 }
 
-int Piece::getRow()
+position Piece::getPos()
 {
-	return row;
+	return pos;
 }
 
-int Piece::getCol()
+void Piece::setPos(std::initializer_list<int> pos)
 {
-	return col;
-}
-
-void Piece::setPos(std::initializer_list<int> params)
-{
-	col = *params.begin();
-	row = *(params.begin() + 1);
+	this->pos = { *pos.begin(), *(pos.begin() + 1) };
 	has_moved = true;
 }
 
@@ -34,18 +27,25 @@ bool Piece::hasMoved()
 	return has_moved;
 }
 
- vector<position> Piece::getMoves(vector<Piece> gameboard)
+ vector<position> Piece::getMoves(vector<Piece> &gameboard)
 {
 	vector<position> moves;
 
 	return moves;
 }
 
- Piece Piece::pieceAt(vector<Piece> gameboard, position pos)
+ bool Piece::pieceAt(vector<Piece> &gameboard, std::initializer_list<int> pos, Piece* piece)
  {
-	 // vector<Piece>::iterator it;
-	 // it = std::search(gameboard.begin(), gameboard.end(), &pos);
-	 // return *it;
-	 Piece p({ 0, 0 });
-	 return p;
+	 cout << &gameboard << "\n";
+	 position to_find = { *pos.begin(), *(pos.begin() + 1) };
+
+	 for (vector<Piece>::iterator it = gameboard.begin(); it < gameboard.end(); it++)
+		 if ((*it).getPos() == to_find)
+		 {
+			 cout << it._Ptr;
+			 return true;
+		 }
+
+	 piece = NULL;
+	 return false;
  }
