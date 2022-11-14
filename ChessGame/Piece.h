@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include <algorithm>
 
 using std::string;
 using std::cout;
@@ -31,4 +32,6 @@ public:
 	bool hasMoved();
 
 	virtual vector<position> getMoves(vector<Piece> gameboard);
+
+	static Piece pieceAt(vector<Piece> gameboard, position pos);
 };

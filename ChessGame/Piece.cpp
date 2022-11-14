@@ -40,3 +40,12 @@ bool Piece::hasMoved()
 
 	return moves;
 }
+
+ Piece Piece::pieceAt(vector<Piece> gameboard, position pos)
+ {
+	 // vector<Piece>::iterator it;
+	 // it = std::search(gameboard.begin(), gameboard.end(), &pos);
+	 // return *it;
+	 Piece p({ 0, 0 });
+	 return p;
+ }

@@ -10,9 +10,15 @@ int main()
 
 	std::cout << "Piece at " << p.getCol() << ", " << p.getRow() << "\n";
 
-	position pos = p.getMoves(gameboard)[0];
+	std::array<int, 5> arr = { 1, 2, 3, 4, 5 };
+	int to_find[1] = { 5 };
 
-	std::cout << pos[0] << ", " << pos[1] << "\n";
+	std::array<int, 5>::iterator it;
+	it = std::search(arr.begin(), arr.end(), to_find, to_find + 1);
+
+	cout << "found at " << *it << "\n";
+
+
 
 	return 0;
 }

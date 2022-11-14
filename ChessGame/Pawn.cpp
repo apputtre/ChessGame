@@ -6,10 +6,10 @@ vector<position> Pawn::getMoves(vector<Piece> gameboard)
 {
 	vector<position> moves;
 
-	// generate initial list of moves
+	// is the tile straight ahead occupied?
 
-	position p = {col, row + 1};
-	moves.push_back(p);
+	
+
 
 	return moves;
 }
