@@ -1,7 +1,8 @@
 #include "Piece.h"
 
-Piece::Piece(std::initializer_list<int> pos, bool is_white)
+Piece::Piece(PieceType type, std::initializer_list<int> pos, bool is_white)
 {
+	this->type = type;
 	this->pos = { *pos.begin(), *(pos.begin() + 1) };
 	this->is_white = is_white;
 }
@@ -27,6 +28,11 @@ bool Piece::hasMoved()
 	return has_moved;
 }
 
+PieceType Piece::getType()
+{
+	return type;
+}
+
  vector<position> Piece::getMoves(vector<Piece> &gameboard)
 {
 	vector<position> moves;
@@ -34,18 +40,18 @@ bool Piece::hasMoved()
 	return moves;
 }
 
- bool Piece::pieceAt(vector<Piece> &gameboard, std::initializer_list<int> pos, Piece* piece)
+ Piece* Piece::pieceAt(vector<Piece> &gameboard, std::initializer_list<int> pos)
  {
-	 cout << &gameboard << "\n";
 	 position to_find = { *pos.begin(), *(pos.begin() + 1) };
 
 	 for (vector<Piece>::iterator it = gameboard.begin(); it < gameboard.end(); it++)
+	 {
 		 if ((*it).getPos() == to_find)
 		 {
-			 cout << it._Ptr;
-			 return true;
+			 return &(*it);
 		 }
+	 }
 
-	 piece = NULL;
-	 return false;
+	 return nullptr;
  }
+
