@@ -23,26 +23,32 @@ enum PieceType
 	KING
 };
 
+enum PlayerColor
+{
+	BLACK,
+	WHITE
+};
+
 class Piece
 {
 protected:
 	position pos;
 
-	bool is_white;
+	PlayerColor color;
 	bool has_moved = false;
 	PieceType type;
 
 public:
-	Piece(PieceType type, std::initializer_list<int> pos, bool is_white = true);
+	Piece(PieceType type, std::initializer_list<int> pos, PlayerColor color = WHITE);
 
 	position getPos();
-	void setPos(std::initializer_list<int> pos);
+	void setPos(position pos);
 
-	bool isWhite();
+	PlayerColor getColor();
 	bool hasMoved();
 	PieceType getType();
 
-	virtual vector<position> getMoves(vector<Piece> &gameboard);
+	virtual vector<position> getMoves(vector<Piece*> &gameboard);
 
-	static Piece* pieceAt(vector<Piece> &gameboard, std::initializer_list<int> pos);
+	static Piece* pieceAt(vector<Piece*> &gameboard, position pos);
 };

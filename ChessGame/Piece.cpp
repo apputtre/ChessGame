@@ -1,10 +1,10 @@
 #include "Piece.h"
 
-Piece::Piece(PieceType type, std::initializer_list<int> pos, bool is_white)
+Piece::Piece(PieceType type, std::initializer_list<int> pos, PlayerColor color)
 {
 	this->type = type;
 	this->pos = { *pos.begin(), *(pos.begin() + 1) };
-	this->is_white = is_white;
+	this->color = color;
 }
 
 position Piece::getPos()
@@ -12,16 +12,17 @@ position Piece::getPos()
 	return pos;
 }
 
-void Piece::setPos(std::initializer_list<int> pos)
+void Piece::setPos(position pos)
 {
-	this->pos = { *pos.begin(), *(pos.begin() + 1) };
+	this->pos = pos;
 	has_moved = true;
 }
 
-bool Piece::isWhite()
+PlayerColor Piece::getColor()
 {
-	return is_white;
+	return color;
 }
+
 
 bool Piece::hasMoved()
 {
@@ -33,22 +34,22 @@ PieceType Piece::getType()
 	return type;
 }
 
- vector<position> Piece::getMoves(vector<Piece> &gameboard)
+ vector<position> Piece::getMoves(vector<Piece*> &gameboard)
 {
 	vector<position> moves;
+
+	cout << "This should never be printed!\n";
 
 	return moves;
 }
 
- Piece* Piece::pieceAt(vector<Piece> &gameboard, std::initializer_list<int> pos)
+ Piece* Piece::pieceAt(vector<Piece*> &gameboard, position pos)
  {
-	 position to_find = { *pos.begin(), *(pos.begin() + 1) };
-
-	 for (vector<Piece>::iterator it = gameboard.begin(); it < gameboard.end(); it++)
+	 for (vector<Piece*>::iterator it = gameboard.begin(); it < gameboard.end(); it++)
 	 {
-		 if ((*it).getPos() == to_find)
+		 if (gameboard[it - gameboard.begin()]->getPos() == pos)
 		 {
-			 return &(*it);
+			 return gameboard[it - gameboard.begin()];
 		 }
 	 }
 
