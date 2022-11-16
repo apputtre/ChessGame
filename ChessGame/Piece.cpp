@@ -1,21 +1,15 @@
 #include "Piece.h"
 
-Piece::Piece(PieceType type, std::initializer_list<int> pos, PlayerColor color)
+Piece::Piece(PieceType type, PlayerColor color)
 {
 	this->type = type;
-	this->pos = { *pos.begin(), *(pos.begin() + 1) };
 	this->color = color;
 }
 
-position Piece::getPos()
+Piece::Piece(PlayerColor color)
 {
-	return pos;
-}
-
-void Piece::setPos(position pos)
-{
-	this->pos = pos;
-	has_moved = true;
+	this->type = DEFAULT;
+	this->color = color;
 }
 
 PlayerColor Piece::getColor()
@@ -34,25 +28,11 @@ PieceType Piece::getType()
 	return type;
 }
 
- vector<position> Piece::getMoves(vector<Piece*> &gameboard)
+ vector<move> Piece::getMoves(chessboard& board)
 {
-	vector<position> moves;
+	vector<move> moves;
 
 	cout << "This should never be printed!\n";
 
 	return moves;
 }
-
- Piece* Piece::pieceAt(vector<Piece*> &gameboard, position pos)
- {
-	 for (vector<Piece*>::iterator it = gameboard.begin(); it < gameboard.end(); it++)
-	 {
-		 if (gameboard[it - gameboard.begin()]->getPos() == pos)
-		 {
-			 return gameboard[it - gameboard.begin()];
-		 }
-	 }
-
-	 return nullptr;
- }
-

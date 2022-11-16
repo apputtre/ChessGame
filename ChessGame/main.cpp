@@ -2,25 +2,25 @@
 #include "Piece.h"
 #include "Pawn.h"
 #include <regex>
+#include "chessdefs.h"
 
-void print_board(vector<Piece*>& gameboard);
+using namespace chess;
+
+void print_board(chessboard& board);
 int do_turn(string input);
 
-
-vector<Piece*> gameboard;
+chessboard board;
 
 int main()
 {
+	Pawn* pawn = new Pawn(WHITE);
+	board[0][0] = pawn;
 	string player_input;
-
-	Pawn* p = new Pawn(PAWN, { 1, 0 }, true);
-
-	gameboard.push_back(p);
 
 	bool exit = false;
 	while (!exit)
 	{
-		print_board(gameboard);
+		print_board(board);
 
 		cout << "\n\n";
 
@@ -39,25 +39,25 @@ int main()
 	return 0;
 }
 
-void print_board(vector<Piece*>& gameboard)
+void print_board(chessboard& board)
 {
-	Piece* p;
+	Piece* piece_ptr;
 	bool white_square = true;
 	for (int row = 7; row >= 0; row--)
 	{
 		cout << (row + 1) << " ";
 		for (int col = 0; col < 8; col++)
 		{
-			p = Piece::pieceAt(gameboard, { col, row });
-			if (p == nullptr)
+			piece_ptr = board[col][row];
+			if (piece_ptr == nullptr)
 			{
 				cout << (white_square ? "OO" : "##");
 			}
 			else
 			{
-				cout << (p->isWhite() ? "w" : "b");
+				cout << (piece_ptr->getColor() == WHITE ? "w" : "b");
 
-				switch (p->getType())
+				switch (piece_ptr->getType())
 				{
 				case PAWN:
 					cout << 'p';
@@ -98,7 +98,7 @@ int do_turn(string player_input)
 	position src_pos = { matches[1].str()[0] - 'a', matches[2].str()[0] - '1'};
 	position dest_pos = { matches[3].str()[0] - 'a', matches[4].str()[0] - '1' };
 
-	Piece* piece_ptr = Piece::pieceAt(gameboard, src_pos);
+	Piece* piece_ptr = board[src_pos[0]][src_pos[1]];
 
 	if (piece_ptr == nullptr)
 	{
@@ -118,28 +118,25 @@ int do_turn(string player_input)
 
 	// is this a legal move?
 	
-	// get the moves the pieces can make
-	vector<position> moves = piece_ptr->getMoves(gameboard);
+	// get the moves the piece can make
+	vector<move> moves = piece_ptr->getMoves(board);
 
-	if (std::find(moves.begin(), moves.end(), dest_pos) == moves.end())
+	// is the selected move legal?
+	bool move_legal = false;
+	for (vector<move>::iterator it = moves.begin(); it < moves.end(); it++)
+		if ((*it).pos_from == src_pos && (*it).pos_to == dest_pos)
+			move_legal = true;
+
+	if (move_legal)
+	{
+		board[src_pos[0]][src_pos[1]] = nullptr;
+		board[dest_pos[0]][dest_pos[1]] = piece_ptr;
+	}
+	else
 	{
 		cout << "Illegal move\n";
 		return 1;
 	}
-
-	
-	// is this a capture?
-	Piece* piece_at_dest = Piece::pieceAt(gameboard, dest_pos);
-	if (piece_at_dest != nullptr)
-	{
-		// if so, remove the piece
-		// remove / erase idiom
-		gameboard.erase(std::remove(gameboard.begin(), gameboard.end(), piece_at_dest), gameboard.end());
-		delete piece_at_dest;
-		cout << "Capture!\n";
-	}
-
-	piece_ptr->setPos(dest_pos);
 
 	return 0;
 }

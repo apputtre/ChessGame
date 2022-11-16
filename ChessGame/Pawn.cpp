@@ -1,27 +1,31 @@
 #include "Pawn.h"
 
-Pawn::Pawn(PieceType type, std::initializer_list<int> pos, PlayerColor color) : Piece(type, pos, color) {}
+Pawn::Pawn(PlayerColor color) : Piece(PAWN, color) {}
 
-vector<position> Pawn::getMoves(vector<Piece*> &gameboard)
+vector<move> Pawn::getMoves(chessboard& board)
 {
+
+	vector<move> moves;
+
 	int forward_dir = ((color == WHITE) ? 1 : -1);
 
-	vector<position> moves;
-
-	// make sure we're not at the top edge of the board
-	if (pos[1] >= 7)
-	{
-		return moves;
-	}
-
-	Piece* target;
+	// get our position
+	position my_pos = board.findPiece(this);
 
 	// can we move straight ahead?
-	target = pieceAt(gameboard, { pos[0], pos[1] + forward_dir });
+	Piece* target = board[my_pos[0]][my_pos[1] + forward_dir];
 
 	if (target == nullptr)
-		moves.push_back({ pos[0], pos[1] + forward_dir });
+	{
+		move m;
+		m.piece = this;
+		m.pos_from = my_pos;
+		m.pos_to = { my_pos[0], my_pos[1] + forward_dir };
 
+		moves.push_back(m);
+	}
+
+	/*
 	// can we move to a diagonal square?
 	// can we en passant?
 	if (target->getColor() != color && !hasMoved) // e.g. is the target of opposing color & is this our first move?
@@ -31,6 +35,7 @@ vector<position> Pawn::getMoves(vector<Piece*> &gameboard)
 		if (pos[0] < 7)
 			moves.push_back({ pos[0] + 1, pos[1] + forward_dir });
 	}
+	*/
 
 	return moves;
 }
