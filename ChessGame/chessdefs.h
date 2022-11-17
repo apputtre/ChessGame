@@ -3,8 +3,6 @@
 #include <array>
 #include <iostream>
 
-using std::cout;
-
 // forward declare Piece
 class Piece;
 
@@ -28,24 +26,6 @@ namespace chess
 
 	typedef std::array<int, 2> position;
 
-	struct chessboard {
-		std::array<std::array<Piece*, 8>, 8> pieces;
-		
-		position findPiece(Piece* to_find)
-		{
-			for (int row = 0; row < 8; row++)
-				for (int col = 0; col < 8; col++)
-					if (pieces[row][col] == to_find)
-						return { row, col };
-		}
-
-		std::array<Piece*, 8>& operator[](int idx)
-		{
-			return pieces[idx];
-		}
-	};
-	
-	// encapsulates information about a move on the board
 	struct move {
 		// the piece that moved
 		Piece* piece;

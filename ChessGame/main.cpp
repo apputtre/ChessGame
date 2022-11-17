@@ -1,20 +1,29 @@
 #include <iostream>
 #include "Piece.h"
+#include "Knight.h"
 #include "Pawn.h"
 #include <regex>
+#include "Chessboard.h"
 #include "chessdefs.h"
 
 using namespace chess;
 
-void print_board(chessboard& board);
-int do_turn(string input);
+Chessboard board;
 
-chessboard board;
+void print_board(Chessboard& board);
+int do_turn(string input);
 
 int main()
 {
-	Pawn* pawn = new Pawn(WHITE);
-	board[0][0] = pawn;
+	Pawn* p1 = new Pawn(WHITE);
+	Pawn* p2 = new Pawn(BLACK);
+	Knight* k1 = new Knight(WHITE);
+
+
+	board.putOnBoard(p1, { 4, 1 });
+	board.putOnBoard(p2, { 4, 2 });
+	board.putOnBoard(k1, { 6, 3 });
+
 	string player_input;
 
 	bool exit = false;
@@ -39,7 +48,7 @@ int main()
 	return 0;
 }
 
-void print_board(chessboard& board)
+void print_board(Chessboard& board)
 {
 	Piece* piece_ptr;
 	bool white_square = true;
@@ -48,7 +57,7 @@ void print_board(chessboard& board)
 		cout << (row + 1) << " ";
 		for (int col = 0; col < 8; col++)
 		{
-			piece_ptr = board[col][row];
+			piece_ptr = board.getPieceAt({ col, row });
 			if (piece_ptr == nullptr)
 			{
 				cout << (white_square ? "OO" : "##");
@@ -61,6 +70,9 @@ void print_board(chessboard& board)
 				{
 				case PAWN:
 					cout << 'p';
+					break;
+				case KNIGHT:
+					cout << 'k';
 					break;
 				default:
 					cout << "!";
@@ -98,7 +110,7 @@ int do_turn(string player_input)
 	position src_pos = { matches[1].str()[0] - 'a', matches[2].str()[0] - '1'};
 	position dest_pos = { matches[3].str()[0] - 'a', matches[4].str()[0] - '1' };
 
-	Piece* piece_ptr = board[src_pos[0]][src_pos[1]];
+	Piece* piece_ptr = board.getPieceAt(src_pos);
 
 	if (piece_ptr == nullptr)
 	{
@@ -111,26 +123,35 @@ int do_turn(string player_input)
 	case PAWN:
 		piece_ptr = (Pawn*)piece_ptr;
 		break;
+	case KNIGHT:
+		piece_ptr = (Knight*)piece_ptr;
+		break;
 	default:
 		cout << "ERROR" << "\n";
 		return 1;
 	}
 
-	// is this a legal move?
-	
 	// get the moves the piece can make
 	vector<move> moves = piece_ptr->getMoves(board);
 
-	// is the selected move legal?
+	// is this a legal move?
+	// if so, fetch the move
 	bool move_legal = false;
 	for (vector<move>::iterator it = moves.begin(); it < moves.end(); it++)
 		if ((*it).pos_from == src_pos && (*it).pos_to == dest_pos)
+		{
 			move_legal = true;
+			m = &(*it);
+			break;
+		}
 
 	if (move_legal)
 	{
-		board[src_pos[0]][src_pos[1]] = nullptr;
-		board[dest_pos[0]][dest_pos[1]] = piece_ptr;
+		if (m->capture)
+			board.takeOffBoard(m->captured);
+
+		board.movePiece(piece_ptr, dest_pos);
+		piece_ptr->has_moved = true;
 	}
 	else
 	{

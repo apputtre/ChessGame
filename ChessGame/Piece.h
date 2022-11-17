@@ -6,6 +6,7 @@
 #include <array>
 #include <algorithm>
 #include "chessdefs.h"
+#include "Chessboard.h"
 
 using std::string;
 using std::cout;
@@ -18,16 +19,16 @@ class Piece
 {
 protected:
 	PlayerColor color;
-	bool has_moved = false;
 	PieceType type;
 
 public:
+	bool has_moved = false;
+
 	Piece(PieceType type, PlayerColor = WHITE);
 	Piece(PlayerColor color = WHITE);
 
 	PlayerColor getColor();
-	bool hasMoved();
 	PieceType getType();
 
-	virtual vector<move> getMoves(chessboard& board);
+	virtual vector<move> getMoves(Chessboard& board);
 };

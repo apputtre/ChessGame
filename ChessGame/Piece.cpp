@@ -18,17 +18,12 @@ PlayerColor Piece::getColor()
 }
 
 
-bool Piece::hasMoved()
-{
-	return has_moved;
-}
-
 PieceType Piece::getType()
 {
 	return type;
 }
 
- vector<move> Piece::getMoves(chessboard& board)
+ vector<move> Piece::getMoves(Chessboard& board)
 {
 	vector<move> moves;
 
