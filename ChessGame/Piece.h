@@ -21,6 +21,10 @@ protected:
 	PlayerColor color;
 	PieceType type;
 
+	vector<move> crawl(Chessboard& board, position dir);
+	vector<move> check_diagonals(Chessboard& board);
+	vector<move> check_cardinals(Chessboard& board);
+
 public:
 	bool has_moved = false;
 

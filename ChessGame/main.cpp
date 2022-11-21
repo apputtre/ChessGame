@@ -5,6 +5,7 @@
 #include <regex>
 #include "Chessboard.h"
 #include "chessdefs.h"
+#include "Bishop.h"
 
 using namespace chess;
 
@@ -18,11 +19,13 @@ int main()
 	Pawn* p1 = new Pawn(WHITE);
 	Pawn* p2 = new Pawn(BLACK);
 	Knight* k1 = new Knight(WHITE);
+	Bishop* b1 = new Bishop(WHITE);
 
 
 	board.putOnBoard(p1, { 4, 1 });
-	board.putOnBoard(p2, { 4, 2 });
+	board.putOnBoard(p2, { 3, 4 });
 	board.putOnBoard(k1, { 6, 3 });
+	board.putOnBoard(b1, { 7, 0 });
 
 	string player_input;
 
@@ -73,6 +76,9 @@ void print_board(Chessboard& board)
 					break;
 				case KNIGHT:
 					cout << 'k';
+					break;
+				case BISHOP:
+					cout << 'b';
 					break;
 				default:
 					cout << "!";
@@ -126,6 +132,9 @@ int do_turn(string player_input)
 	case KNIGHT:
 		piece_ptr = (Knight*)piece_ptr;
 		break;
+	case BISHOP:
+		piece_ptr = (Bishop*)piece_ptr;
+		break;
 	default:
 		cout << "ERROR" << "\n";
 		return 1;
@@ -137,6 +146,7 @@ int do_turn(string player_input)
 	// is this a legal move?
 	// if so, fetch the move
 	bool move_legal = false;
+	move* m = nullptr;
 	for (vector<move>::iterator it = moves.begin(); it < moves.end(); it++)
 		if ((*it).pos_from == src_pos && (*it).pos_to == dest_pos)
 		{
