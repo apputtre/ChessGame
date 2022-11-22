@@ -6,6 +6,9 @@
 #include "Chessboard.h"
 #include "chessdefs.h"
 #include "Bishop.h"
+#include "Rook.h"
+#include "Queen.h"
+#include "King.h"
 
 using namespace chess;
 
@@ -13,19 +16,11 @@ Chessboard board;
 
 void print_board(Chessboard& board);
 int do_turn(string input);
+void setup_board();
 
 int main()
 {
-	Pawn* p1 = new Pawn(WHITE);
-	Pawn* p2 = new Pawn(BLACK);
-	Knight* k1 = new Knight(WHITE);
-	Bishop* b1 = new Bishop(WHITE);
-
-
-	board.putOnBoard(p1, { 4, 1 });
-	board.putOnBoard(p2, { 3, 4 });
-	board.putOnBoard(k1, { 6, 3 });
-	board.putOnBoard(b1, { 7, 0 });
+	setup_board();
 
 	string player_input;
 
@@ -80,6 +75,15 @@ void print_board(Chessboard& board)
 				case BISHOP:
 					cout << 'b';
 					break;
+				case ROOK:
+					cout << 'r';
+					break;
+				case QUEEN:
+					cout << 'Q';
+					break;
+				case KING:
+					cout << 'K';
+					break;
 				default:
 					cout << "!";
 					break;
@@ -124,6 +128,7 @@ int do_turn(string player_input)
 		return 1;
 	}
 
+	/*
 	switch (piece_ptr->getType())
 	{
 	case PAWN:
@@ -139,6 +144,7 @@ int do_turn(string player_input)
 		cout << "ERROR" << "\n";
 		return 1;
 	}
+	*/
 
 	// get the moves the piece can make
 	vector<move> moves = piece_ptr->getMoves(board);
@@ -170,4 +176,31 @@ int do_turn(string player_input)
 	}
 
 	return 0;
+}
+
+void setup_board()
+{
+	// set up white's back row
+	board.putOnBoard(new Rook(WHITE), { 0, 0 });
+	board.putOnBoard(new Knight(WHITE), { 1, 0 });
+	board.putOnBoard(new Bishop(WHITE), { 2, 0 });
+	board.putOnBoard(new Queen(WHITE), { 3, 0 });
+	board.putOnBoard(new King(WHITE), { 4, 0 });
+	board.putOnBoard(new Bishop(WHITE), { 5, 0 });
+	board.putOnBoard(new Knight(WHITE), { 6, 0 });
+	board.putOnBoard(new Rook(WHITE), { 7, 0 });
+	// white pawns
+	for (int i = 0; i < 8; board.putOnBoard(new Pawn(WHITE), { i++, 1 })) {}
+
+	// set up black's back row
+	board.putOnBoard(new Rook(BLACK), { 0, 7 });
+	board.putOnBoard(new Knight(BLACK), { 1, 7 });
+	board.putOnBoard(new Bishop(BLACK), { 2, 7 });
+	board.putOnBoard(new Queen(BLACK), { 3, 7 });
+	board.putOnBoard(new King(BLACK), { 4, 7 });
+	board.putOnBoard(new Bishop(BLACK), { 5, 7 });
+	board.putOnBoard(new Knight(BLACK), { 6, 7 });
+	board.putOnBoard(new Rook(BLACK), { 7, 7 });
+	// black pawns
+	for (int i = 0; i < 8; board.putOnBoard(new Pawn(BLACK), { i++, 6 })) {}
 }

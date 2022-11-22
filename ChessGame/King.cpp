@@ -10,7 +10,7 @@ vector<move> King::getMoves(Chessboard& board)
 
 	position to_check;
 	for (int i = 0; i < 8; i++) {
-		to_check = { my_pos[0] + Directions[i][0], my_pos[1] + Directions[i][1] };
+		to_check = my_pos + Directions[i];
 
 		if (board.withinBounds(to_check))
 		{

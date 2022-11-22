@@ -30,40 +30,23 @@ vector<move> Knight::getMoves(Chessboard& board)
 
 	// check the squares
 	for (int i = 0; i < 8; i++)
-	{
-		position pos = to_check[i];
-		
-		// is this position on the board?
-		if (board.withinBounds(pos))
-		{
-			// get the piece at the square in question (if any)
-			Piece* target = board.getPieceAt(pos);
-
-			// is the square unoccupied?
-			if (target == nullptr)
-			{
-				move m;
-				m.piece = this;
-				m.pos_from = my_pos;
-				m.pos_to = pos;
-
-				moves.push_back(m);
-			}
-			// is the square occupied by an enemy piece?
-			else if (target->getColor() != color)
-			{
-				move m;
-				m.piece = this;
-				m.pos_from = my_pos;
-				m.pos_to = pos;
-				m.capture = true;
-				m.captured = target;
-
-				moves.push_back(m);
-			}
-
-		}
-	}
+		if (isLegalMove(to_check[i], board))
+			moves.push_back(getMove(to_check[i], board));
 
 	return moves;
+}
+
+bool Knight::isLegalMove(position pos_to, Chessboard& board)
+{
+	// check if the square is obstructed or off the board
+	if (!Piece::isLegalMove(pos_to, board))
+		return false;
+
+	// get our position
+	position my_pos = board.getPosOf(this);
+	// get difference in my_pos and pos_to
+	position diff = my_pos - pos_to;
+
+	if (abs(diff[0]) == 2 && abs(diff[1]) == 1 || abs(diff[0]) == 1 && abs(diff[1] == 2))
+		return true; 
 }

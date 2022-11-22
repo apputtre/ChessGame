@@ -21,9 +21,12 @@ protected:
 	PlayerColor color;
 	PieceType type;
 
-	vector<move> crawl(Chessboard& board, position dir);
+	vector<move> crawl(Chessboard& board, position dir, int distance = 8);
 	vector<move> check_diagonals(Chessboard& board);
 	vector<move> check_cardinals(Chessboard& board);
+	bool is_square_obstructed(Chessboard& board, position pos);
+
+	char error_flags;
 
 public:
 	bool has_moved = false;
@@ -33,6 +36,9 @@ public:
 
 	PlayerColor getColor();
 	PieceType getType();
+	char getErrorFlags();
 
 	virtual vector<move> getMoves(Chessboard& board);
+	virtual bool isLegalMove(position pos_to, Chessboard& board);
+	move getMove(position pos_to, Chessboard& board);
 };

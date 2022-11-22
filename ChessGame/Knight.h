@@ -13,5 +13,5 @@ public:
 	Knight(PlayerColor color);
 
 	std::vector<move> getMoves(Chessboard& board) override;
-
+	bool isLegalMove(position pos_to, Chessboard& board) override;
 };

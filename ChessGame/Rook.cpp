@@ -11,3 +11,11 @@ vector<move> Rook::getMoves(Chessboard& board)
 
 	return moves;
 }
+
+bool Rook::isLegalMove(position to_pos, Chessboard& board)
+{
+	if (!Piece::isLegalMove(to_pos, board))
+		return false;
+
+	
+}
