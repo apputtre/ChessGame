@@ -10,4 +10,5 @@ public:
 	Bishop(PlayerColor color);
 
 	vector<move> getMoves(Chessboard& board) override;
+	bool isLegalMove(position pos, Chessboard& board) override;
 };

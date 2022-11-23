@@ -47,6 +47,11 @@ bool Knight::isLegalMove(position pos_to, Chessboard& board)
 	// get difference in my_pos and pos_to
 	position diff = my_pos - pos_to;
 
-	if (abs(diff[0]) == 2 && abs(diff[1]) == 1 || abs(diff[0]) == 1 && abs(diff[1] == 2))
+	if (abs(diff[0]) == 2 && abs(diff[1]) == 1 || abs(diff[0]) == 1 && abs(diff[1]) == 2)
 		return true; 
+	else
+	{
+		error_flags |= ILLEGAL_SQUARE;
+		return false;
+	}
 }

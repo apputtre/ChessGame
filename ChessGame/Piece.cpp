@@ -80,7 +80,7 @@ bool Piece::is_square_obstructed(Chessboard& board, position pos)
 	if (piece_at_pos != nullptr)
 		return (piece_at_pos->getColor() == getColor());
 
-	return true;
+	return false;
 }
 
 Piece::Piece(PieceType type, PlayerColor color)
@@ -127,14 +127,14 @@ char Piece::getErrorFlags()
 	// is this move on the board?
 	if (!board.withinBounds(pos_to))
 	{
-		error_flags = NOT_ON_BOARD;
+		error_flags |= NOT_ON_BOARD;
 		return false;
 	}
 
 	// is the destination square obstructed by a friendly piece?
 	if (is_square_obstructed(board, pos_to))
 	{
-		error_flags = OBSTRUCTED_SQUARE;
+		error_flags |= OBSTRUCTED_SQUARE;
 		return false;
 	}
 

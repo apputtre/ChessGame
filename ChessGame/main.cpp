@@ -124,54 +124,56 @@ int do_turn(string player_input)
 
 	if (piece_ptr == nullptr)
 	{
-		cout << "There is no piece at the specified square\n";
+		cout << "There is no piece at the specified square.\n";
 		return 1;
 	}
-
-	/*
-	switch (piece_ptr->getType())
-	{
-	case PAWN:
-		piece_ptr = (Pawn*)piece_ptr;
-		break;
-	case KNIGHT:
-		piece_ptr = (Knight*)piece_ptr;
-		break;
-	case BISHOP:
-		piece_ptr = (Bishop*)piece_ptr;
-		break;
-	default:
-		cout << "ERROR" << "\n";
-		return 1;
-	}
-	*/
-
-	// get the moves the piece can make
-	vector<move> moves = piece_ptr->getMoves(board);
 
 	// is this a legal move?
-	// if so, fetch the move
-	bool move_legal = false;
-	move* m = nullptr;
-	for (vector<move>::iterator it = moves.begin(); it < moves.end(); it++)
-		if ((*it).pos_from == src_pos && (*it).pos_to == dest_pos)
-		{
-			move_legal = true;
-			m = &(*it);
-			break;
-		}
-
-	if (move_legal)
+	if (piece_ptr->isLegalMove(dest_pos, board))
 	{
-		if (m->capture)
-			board.takeOffBoard(m->captured);
+		// get the move
+		move m = piece_ptr->getMove(dest_pos, board);
+
+		if (m.capture)
+			board.takeOffBoard(m.captured);
 
 		board.movePiece(piece_ptr, dest_pos);
 		piece_ptr->has_moved = true;
 	}
 	else
 	{
-		cout << "Illegal move\n";
+		int flags = piece_ptr->getErrorFlags();
+
+		if ((flags & ILLEGAL_SQUARE) > 0)
+		{
+			cout << "The piece cannot move to that square.\n";
+		}
+
+		if ((flags & NOT_FIRST_TURN) > 0)
+		{
+			cout << "The piece can only move that way on its first turn.\n";
+		}
+
+		if ((flags & OBSTRUCTED_SQUARE) > 0)
+		{
+			cout << "The destination square is obstructed by a piece that can't be captured.\n";
+		}
+
+		if ((flags & OBSTRUCTED_PATH) > 0)
+		{
+			cout << "The piece is blocked by another in it's path.\n";
+		}
+
+		if ((flags & KING_IN_CHECK) > 0)
+		{
+			cout << "Your move must get your king out of check.\n";
+		}
+
+		if ((flags & NOT_ON_BOARD) > 0)
+		{
+			cout << "The square you selected is not on the board (how did you even select it?)\n";
+		}
+
 		return 1;
 	}
 

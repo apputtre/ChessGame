@@ -25,13 +25,31 @@ bool Pawn::isLegalMove(position pos_to, Chessboard& board)
 	// which direction is forward?
 	int forward_dir = (getColor() == WHITE ? 1 : -1);
 
-	// is this a simple forward move?
-	if (pos_to[1] == my_pos[1] + forward_dir && board.getPieceAt(pos_to) == nullptr)
-		return true;
+	// is this a forward move (same column)?
+	if (pos_to[0] == my_pos[0])
+	{
+		// is this a single-square forward move?
+		if (pos_to[1] == my_pos[1] + forward_dir)
+			// is the square empty?
+			if (board.getPieceAt(pos_to) == nullptr)
+				return true;
+			else
+			{
+				// the square is occupied by an enemy piece
+				error_flags |= OBSTRUCTED_SQUARE;
+				return false;
+			}
 
-	// is this a double move?
-	if (pos_to[1] == my_pos[1] + 2 * forward_dir && board.getPieceAt(pos_to) == nullptr)
-		return !has_moved;
+		// is this a double move?
+		if (pos_to[1] == my_pos[1] + 2 * forward_dir && board.getPieceAt(pos_to) == nullptr)
+			if (!has_moved)
+				return true;
+			else
+			{
+				error_flags |= NOT_FIRST_TURN;
+				return false;
+			}
+	}
 
 	// is this a diagonal move?
 	if (abs(pos_to[0] - my_pos[0]) == 1 && pos_to[1] == my_pos[1] + forward_dir )
@@ -43,11 +61,11 @@ bool Pawn::isLegalMove(position pos_to, Chessboard& board)
 			return true;
 		else
 		{
-			error_flags = ILLEGAL_SQUARE;
+			error_flags |= ILLEGAL_SQUARE;
 			return false;
 		}
 	}
 
-	error_flags = ILLEGAL_SQUARE;
+	error_flags |= ILLEGAL_SQUARE;
 	return false;
 }

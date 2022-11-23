@@ -13,14 +13,35 @@ namespace chess
 	{
 		int col_num, row_num;
 
+		position normalize()
+		{
+			if (col_num < 0)
+				col_num = -1;
+			else
+				col_num = 1;
+
+			if (row_num < 0)
+				row_num = -1;
+			else
+				row_num = 1;
+
+			return *this;
+		}
+
 		void operator=(const position& rval)
 		{
 			this->col_num = rval.col_num;
 			this->row_num = rval.row_num;
 		}
+
 		bool operator==(const position& rval)
 		{
 			return this->col_num == rval.col_num && this->row_num == rval.row_num;
+		}
+
+		bool operator!=(const position& rval)
+		{
+			return !(*this == rval);
 		}
 
 		position operator+(const position& rval)
