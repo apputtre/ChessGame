@@ -4,7 +4,6 @@
 #include <iostream>
 #include <exception>
 
-// forward declare Piece
 class Piece;
 
 namespace chess
@@ -17,13 +16,17 @@ namespace chess
 		{
 			if (col_num < 0)
 				col_num = -1;
-			else
+			else if (col_num > 0)
 				col_num = 1;
+			else
+				col_num = 0;
 
 			if (row_num < 0)
 				row_num = -1;
-			else
+			else if (row_num > 0)
 				row_num = 1;
+			else
+				row_num = 0;
 
 			return *this;
 		}

@@ -2,15 +2,9 @@
 
 Pawn::Pawn(PlayerColor color) : Piece(PAWN, color) {}
 
-vector<move> Pawn::getMoves(Chessboard& board)
+std::vector<move> Pawn::getMoves(Chessboard& board)
 {
-	vector<move> moves;
-
-	// get our position
-	position my_pos = board.getPosOf(this);
-	
-
-	return moves;
+	return Piece::getMoves(board);
 }
 
 bool Pawn::isLegalMove(position pos_to, Chessboard& board)
@@ -31,15 +25,13 @@ bool Pawn::isLegalMove(position pos_to, Chessboard& board)
 		// is this a single-square forward move?
 		if (pos_to[1] == my_pos[1] + forward_dir)
 			// is the square empty?
-			if (board.getPieceAt(pos_to) == nullptr)
-				return true;
-			else
+			if (is_square_obstructed(board, pos_to))
 			{
-				// the square is occupied by an enemy piece
 				error_flags |= OBSTRUCTED_SQUARE;
 				return false;
 			}
-
+			else
+				return true;
 		// is this a double move?
 		if (pos_to[1] == my_pos[1] + 2 * forward_dir && board.getPieceAt(pos_to) == nullptr)
 			if (!has_moved)

@@ -73,12 +73,73 @@ vector<move> Piece::check_cardinals(Chessboard& board)
 	return moves;
 }
 
+bool Piece::check_castle(Chessboard& board, Piece* rook, Piece* king)
+{
+	// are these pieces of the appropriate types?
+	if (rook->getType() == ROOK && king->getType() == KING)
+	{
+		// do these pieces belong to the same player?
+		if (rook->getColor() == king->getColor())
+		{
+			// have either of these pieces moved?
+			if (!rook->has_moved && !king->has_moved)
+			{
+				position king_pos = board.getPosOf(king);
+				position rook_pos = board.getPosOf(rook);
+
+				// is the king in check?
+				PlayerColor enemy_color;
+				if (rook->getColor() == WHITE)
+					enemy_color = BLACK;
+				else
+					enemy_color = WHITE;
+				
+				if (!is_square_threatened(board, king_pos, enemy_color))
+				{
+					position dir = (rook_pos - king_pos).normalize();
+
+					// can the rook move the the square next to the king?
+					if (rook->isLegalMove(king_pos + dir, board))
+					{
+						// are either of the two squares next to the king threatened?
+						if (!is_square_threatened(board, king_pos + dir, enemy_color) && !is_square_threatened(board, king_pos + dir + dir, enemy_color))
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 bool Piece::is_square_obstructed(Chessboard& board, position pos)
 {
 	Piece* piece_at_pos = board.getPieceAt(pos);
 
 	if (piece_at_pos != nullptr)
 		return (piece_at_pos->getColor() == getColor());
+
+	return false;
+}
+
+bool Piece::is_square_threatened(Chessboard& board, position pos, PlayerColor color)
+{
+	// get a list of pieces which could threaten the square
+	vector<Piece*> pieces = Piece::getPieces(board, color);
+	vector<move> moves;
+
+	for (auto it = pieces.begin(); it < pieces.end(); it++)
+	{
+		vector<move> m;
+		m = (*it)->getMoves(board);
+
+		moves.insert(moves.end(), m.begin(), m.end());
+	}
+
+	for (auto it = moves.begin(); it < moves.end(); it++)
+		if ((*it).pos_to == pos)
+			return true;
 
 	return false;
 }
@@ -111,13 +172,6 @@ PieceType Piece::getType()
 char Piece::getErrorFlags()
 {
 	return error_flags;
-}
-
- vector<move> Piece::getMoves(Chessboard& board)
-{
-	vector<move> moves;
-
-	return moves;
 }
 
  bool Piece::isLegalMove(position pos_to, Chessboard& board)
@@ -158,3 +212,27 @@ char Piece::getErrorFlags()
 		 // this was a capture
 		 return move(this, my_pos, pos_to, to_piece);
  }
+
+ std::vector<move> Piece::getMoves(Chessboard& board)
+ {
+	 std::vector<move> moves;
+
+	 for (int row = 0; row < 8; row++)
+		 for (int col = 0; col < 8; col++)
+			 if (this->isLegalMove(position{ col, row }, board))
+				 moves.push_back(this->getMove(position{ col, row }, board));
+
+	 return moves;
+ }
+
+ std::vector<Piece*> Piece::getPieces(Chessboard& board, PlayerColor color)
+ {
+	 std::vector<Piece*> piece_vec = board.getPieces();
+
+	std::remove_if(piece_vec.begin(), piece_vec.end(), [color](Piece* p) ->bool
+		{
+			return p->getColor() != color;
+		});
+
+	return piece_vec;
+}

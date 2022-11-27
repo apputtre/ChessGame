@@ -25,6 +25,8 @@ protected:
 	vector<move> check_diagonals(Chessboard& board);
 	vector<move> check_cardinals(Chessboard& board);
 	bool is_square_obstructed(Chessboard& board, position pos);
+	bool is_square_threatened(Chessboard& board, position pos, PlayerColor color);
+	bool check_castle(Chessboard& board, Piece* rook, Piece* king);
 
 	char error_flags;
 
@@ -37,6 +39,8 @@ public:
 	PlayerColor getColor();
 	PieceType getType();
 	char getErrorFlags();
+	std::vector<Piece*> getPieces(Chessboard& board, PlayerColor color);
+	bool kingInCheck(Chessboard& board, PlayerColor color);
 
 	virtual vector<move> getMoves(Chessboard& board);
 	virtual bool isLegalMove(position pos_to, Chessboard& board);

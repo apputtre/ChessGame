@@ -11,9 +11,9 @@ vector<move> Bishop::getMoves(Chessboard& board)
 	return moves;
 }
 
-bool Bishop::isLegalMove(position pos, Chessboard& board)
+bool Bishop::isLegalMove(position to_pos, Chessboard& board)
 {
-	if (!Piece::isLegalMove(pos, board))
+	if (!Piece::isLegalMove(to_pos, board))
 		return false;
 
 	// get our position
@@ -26,13 +26,13 @@ bool Bishop::isLegalMove(position pos, Chessboard& board)
 	int anti_diagonal = my_pos[1] + my_pos[0];
 
 	// does the destination square share a diagonal with us?
-	if (pos[1] - pos[0] == diagonal || pos[1] + pos[0] == anti_diagonal)
+	if (to_pos[1] - to_pos[0] == diagonal || to_pos[1] + to_pos[0] == anti_diagonal)
 	{
 		// check if there are any pieces between us and the destination square
-		position dir = (pos - my_pos).normalize();
+		position dir = (to_pos - my_pos).normalize();
 		position to_check = my_pos + dir;
 		Piece* target;
-		while (to_check != (pos + dir))
+		while (to_check != (to_pos + dir))
 		{
 			target = board.getPieceAt(to_check);
 
@@ -45,7 +45,7 @@ bool Bishop::isLegalMove(position pos, Chessboard& board)
 				}
 				else
 				{
-					if (to_check != pos)
+					if (to_check != to_pos)
 					{
 						error_flags |= OBSTRUCTED_PATH;
 						return false;

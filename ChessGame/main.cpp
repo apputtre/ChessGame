@@ -14,7 +14,7 @@ using namespace chess;
 
 Chessboard board;
 
-void print_board(Chessboard& board);
+void print_board(Chessboard& board, Piece* show_moves_for = nullptr);
 int do_turn(string input);
 void setup_board();
 
@@ -46,8 +46,20 @@ int main()
 	return 0;
 }
 
-void print_board(Chessboard& board)
+void print_board(Chessboard& board, Piece* show_moves_for)
 {
+	std::vector<position> to_highlight;
+
+	if (show_moves_for != nullptr)
+	{
+		std::vector<move> moves = show_moves_for->getMoves(board);
+
+		for (auto it = moves.begin(); it < moves.end(); it++)
+			to_highlight.push_back((*it).pos_to);
+
+		cout << to_highlight.size() << "\n";
+	}
+	
 	Piece* piece_ptr;
 	bool white_square = true;
 	for (int row = 7; row >= 0; row--)
@@ -58,7 +70,10 @@ void print_board(Chessboard& board)
 			piece_ptr = board.getPieceAt({ col, row });
 			if (piece_ptr == nullptr)
 			{
-				cout << (white_square ? "OO" : "##");
+				if (std::find(to_highlight.begin(), to_highlight.end(), position { col, row }) != to_highlight.end())
+					cout << "XX";
+				else
+					cout << (white_square ? "OO" : "##");
 			}
 			else
 			{
@@ -107,73 +122,100 @@ int do_turn(string player_input)
 
 	// matches 'letter digit space letter digit'
 	// e.g. 'a1 a2'
-	std::regex input_exp("([a-h])(\\d)\\s([a-h])(\\d)");
+	std::regex input_exp_move("([a-h])(\\d)\\s([a-h])(\\d)");
+	// matches !{command} space letter digit
+	// e.g. !showmoves b3
+	std::regex input_exp_debug("!(.*)\\s([a-h])(\\d)");
 	std::smatch matches;
 
-	if (!std::regex_match(player_input, matches, input_exp))
+	if (std::regex_match(player_input, matches, input_exp_move))
 	{
-		cout << "Invalid command\n";
-		return 1;
+		// matches[0] contains the full input (for some reason)
+		position src_pos = { matches[1].str()[0] - 'a', matches[2].str()[0] - '1'};
+		position dest_pos = { matches[3].str()[0] - 'a', matches[4].str()[0] - '1' };
+
+		Piece* piece_ptr = board.getPieceAt(src_pos);
+
+		if (piece_ptr == nullptr)
+		{
+			cout << "There is no piece at the specified square.\n";
+			return 1;
+		}
+
+		// is this a legal move?
+		if (piece_ptr->isLegalMove(dest_pos, board))
+		{
+			// get the move
+			move m = piece_ptr->getMove(dest_pos, board);
+
+			if (m.capture)
+				board.takeOffBoard(m.captured);
+
+			board.movePiece(piece_ptr, dest_pos);
+			piece_ptr->has_moved = true;
+		}
+		else
+		{
+			int flags = piece_ptr->getErrorFlags();
+
+			if ((flags & ILLEGAL_SQUARE) > 0)
+			{
+				cout << "The piece cannot move to that square.\n";
+			}
+
+			if ((flags & NOT_FIRST_TURN) > 0)
+			{
+				cout << "The piece can only move that way on its first turn.\n";
+			}
+
+			if ((flags & OBSTRUCTED_SQUARE) > 0)
+			{
+				cout << "The destination square is obstructed by a piece that can't be captured.\n";
+			}
+
+			if ((flags & OBSTRUCTED_PATH) > 0)
+			{
+				cout << "The piece is blocked by another in it's path.\n";
+			}
+
+			if ((flags & KING_IN_CHECK) > 0)
+			{
+				cout << "Your move must get your king out of check.\n";
+			}
+
+			if ((flags & NOT_ON_BOARD) > 0)
+			{
+				cout << "The square you selected is not on the board (how did you even select it?)\n";
+			}
+
+			return 1;
+		}
 	}
-
-	// matches[0] contains the full input (for some reason)
-	position src_pos = { matches[1].str()[0] - 'a', matches[2].str()[0] - '1'};
-	position dest_pos = { matches[3].str()[0] - 'a', matches[4].str()[0] - '1' };
-
-	Piece* piece_ptr = board.getPieceAt(src_pos);
-
-	if (piece_ptr == nullptr)
+	else if (std::regex_match(player_input, matches, input_exp_debug))
 	{
-		cout << "There is no piece at the specified square.\n";
+		// matches[0] contains the full input (for some reason)
+
+		string command = matches[1].str();
+		position pos = position{ matches[2].str()[0] - 'a', matches[3].str()[0] - '1' };
+
+		if (command == "showmoves")
+		{
+			if (board.getPieceAt(pos) != nullptr)
+			{
+				print_board(board, board.getPieceAt(pos));
+				cout << "\n";
+			}
+		}
+		else
+		{
+			cout << "Command \'" << command << "\' not recognized\n";
+		}
+
 		return 1;
-	}
-
-	// is this a legal move?
-	if (piece_ptr->isLegalMove(dest_pos, board))
-	{
-		// get the move
-		move m = piece_ptr->getMove(dest_pos, board);
-
-		if (m.capture)
-			board.takeOffBoard(m.captured);
-
-		board.movePiece(piece_ptr, dest_pos);
-		piece_ptr->has_moved = true;
 	}
 	else
 	{
-		int flags = piece_ptr->getErrorFlags();
-
-		if ((flags & ILLEGAL_SQUARE) > 0)
-		{
-			cout << "The piece cannot move to that square.\n";
-		}
-
-		if ((flags & NOT_FIRST_TURN) > 0)
-		{
-			cout << "The piece can only move that way on its first turn.\n";
-		}
-
-		if ((flags & OBSTRUCTED_SQUARE) > 0)
-		{
-			cout << "The destination square is obstructed by a piece that can't be captured.\n";
-		}
-
-		if ((flags & OBSTRUCTED_PATH) > 0)
-		{
-			cout << "The piece is blocked by another in it's path.\n";
-		}
-
-		if ((flags & KING_IN_CHECK) > 0)
-		{
-			cout << "Your move must get your king out of check.\n";
-		}
-
-		if ((flags & NOT_ON_BOARD) > 0)
-		{
-			cout << "The square you selected is not on the board (how did you even select it?)\n";
-		}
-
+		cout << "Invalid input\n";
 		return 1;
 	}
 

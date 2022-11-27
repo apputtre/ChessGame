@@ -40,3 +40,21 @@ vector<move> King::getMoves(Chessboard& board)
 
 	return moves;
 }
+
+bool King::isLegalMove(position to_pos, Chessboard& board)
+{
+	if (!Piece::isLegalMove(to_pos, board))
+		return false;
+
+	// get our position
+	position my_pos = board.getPosOf(this);
+	position diff = to_pos - my_pos;
+
+	if (std::abs(diff[0]) <= 1 && std::abs(diff[1]) <= 1)
+	{
+
+	}
+
+	error_flags |= ILLEGAL_SQUARE;
+	return false;
+}
