@@ -158,18 +158,18 @@ Piece::Piece(PlayerColor color)
 	this->color = color;
 }
 
-PlayerColor Piece::getColor()
+PlayerColor Piece::getColor() const
 {
 	return color;
 }
 
 
-PieceType Piece::getType()
+PieceType Piece::getType() const
 {
 	return type;
 }
 
-char Piece::getErrorFlags()
+char Piece::getErrorFlags() const
 {
 	return error_flags;
 }
@@ -236,3 +236,30 @@ char Piece::getErrorFlags()
 
 	return piece_vec;
 }
+
+ ostream& operator<<(ostream& os, const Piece& rval)
+ {
+	 string to_print;
+
+	 to_print += "[";
+
+	 rval.getColor() == WHITE ? to_print += "white " : to_print += "black ";
+
+	 if (rval.getType() == PAWN)
+		 to_print += "pawn ";
+	 else if (rval.getType() == KNIGHT)
+		 to_print += "knight ";
+	 else if (rval.getType() == BISHOP)
+		 to_print += "bishop ";
+	 else if (rval.getType() == ROOK)
+		 to_print += "rook ";
+	 else if (rval.getType() == KING)
+		 to_print += "king ";
+	 else if (rval.getType() == QUEEN)
+		 to_print += "queen ";
+
+	 to_print += "]";
+
+	 return os;
+
+ }

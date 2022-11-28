@@ -20,9 +20,14 @@ void setup_board();
 
 int main()
 {
-	setup_board();
+	//setup_board();
 
-	string player_input;
+	board.putOnBoard(new Pawn(WHITE), { 0, 0 });
+	board.putOnBoard(new Knight(WHITE), { 1, 0 });
+	board.putOnBoard(new Bishop(BLACK), { 2, 0 });
+	board.putOnBoard(new Rook(BLACK), { 3, 0 });
+
+	 string player_input;
 
 	bool exit = false;
 	while (!exit)
@@ -198,12 +203,20 @@ int do_turn(string player_input)
 		string command = matches[1].str();
 		position pos = position{ matches[2].str()[0] - 'a', matches[3].str()[0] - '1' };
 
-		if (command == "showmoves")
+		if (command == "sm")
 		{
 			if (board.getPieceAt(pos) != nullptr)
 			{
 				print_board(board, board.getPieceAt(pos));
 				cout << "\n";
+			}
+		}
+		else if (command == "del")
+		{
+			if (board.getPieceAt(pos) != nullptr)
+			{
+				board.takeOffBoard(board.getPieceAt(pos));
+				return 0;
 			}
 		}
 		else

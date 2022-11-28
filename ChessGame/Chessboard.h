@@ -12,7 +12,7 @@ class Chessboard
 	std::array<std::array<Piece*, 8>, 8> pieces;
 
 	// does this piece exist on or off the board?
-	bool pieceExtant(Piece* piece);
+	bool pieceExtant(const Piece* piece);
 
 public:
 	// is the specified position within the bounds of the board?
@@ -22,7 +22,7 @@ public:
 	// given an already-created piece, put it on the board
 	void putOnBoard(Piece* piece, position at_pos);
 	// get the position of the specified piece on the board
-	position getPosOf(Piece* to_find);
+	position getPosOf(const Piece* to_find);
 	// get the piece on the board at the specified position
 	Piece* getPieceAt(position pos);
 	// is there a piece on the board at position pos?

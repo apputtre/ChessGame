@@ -12,6 +12,7 @@ using std::string;
 using std::cout;
 using std::cin;
 using std::vector;
+using std::ostream;
 
 using namespace chess;
 
@@ -36,13 +37,16 @@ public:
 	Piece(PieceType type, PlayerColor = WHITE);
 	Piece(PlayerColor color = WHITE);
 
-	PlayerColor getColor();
-	PieceType getType();
-	char getErrorFlags();
-	std::vector<Piece*> getPieces(Chessboard& board, PlayerColor color);
-	bool kingInCheck(Chessboard& board, PlayerColor color);
+	PlayerColor getColor() const;
+	PieceType getType() const;
+	char getErrorFlags() const;
+
+	static std::vector<Piece*> getPieces(Chessboard& board, PlayerColor color);
+	static bool kingInCheck(Chessboard& board, PlayerColor color);
 
 	virtual vector<move> getMoves(Chessboard& board);
 	virtual bool isLegalMove(position pos_to, Chessboard& board);
 	move getMove(position pos_to, Chessboard& board);
 };
+
+ostream& operator<<(ostream& os, const Piece& rval);

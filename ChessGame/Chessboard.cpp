@@ -11,7 +11,7 @@ Chessboard::~Chessboard()
 }
 
 // private
-bool Chessboard::pieceExtant(Piece* piece)
+bool Chessboard::pieceExtant(const Piece* piece)
 {
 	std::vector<Piece*> piece_vec = getPieces();
 
@@ -57,7 +57,7 @@ void Chessboard::putOnBoard(Piece* piece, position at_pos)
 	}
 }
 
-position Chessboard::getPosOf(Piece* to_find)
+position Chessboard::getPosOf(const Piece* to_find)
 {
 	for (int row = 0; row < 8; row++)
 		for (int col = 0; col < 8; col++)
