@@ -39,6 +39,13 @@ bool King::isLegalMove(position to_pos, Chessboard& board)
 
 	// get our position
 	position my_pos = board.getPosOf(this);
+
+	// castling?
+	if (!has_moved && (to_pos == my_pos + East * 2 || to_pos == my_pos + West * 2))
+	{
+
+	}
+
 	position diff = to_pos - my_pos;
 
 	if (std::abs(diff[0]) <= 1 && std::abs(diff[1]) <= 1)

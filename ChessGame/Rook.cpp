@@ -17,9 +17,6 @@ bool Rook::isLegalMove(position to_pos, Chessboard& board)
 	if (!Piece::isLegalMove(to_pos, board))
 		return false;
 
-	// castling?
-
-
 	// get our position
 	position my_pos = board.getPosOf(this);
 

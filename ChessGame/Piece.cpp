@@ -144,6 +144,31 @@ bool Piece::is_square_threatened(Chessboard& board, position pos, PlayerColor co
 	return false;
 }
 
+bool Piece::kingInCheck(Chessboard& board, PlayerColor color)
+{
+	// get the king
+	Piece* king = nullptr;
+	std::vector<Piece*> pieces = getPieces(board, color);
+
+	for (auto it = pieces.begin(); it < pieces.end(); it++)
+	{
+		if ((*it)->getType() == KING)
+		{
+			king = (*it);
+		}
+	}
+
+	if (king == nullptr)
+	{
+		throw (std::invalid_argument("There is no king on the board!"));
+	}
+
+	PlayerColor enemy_color = (color == WHITE ? BLACK : WHITE);
+
+	return is_square_threatened(board, board.getPosOf(king), enemy_color);
+
+}
+
 Piece::Piece(PieceType type, PlayerColor color)
 {
 	error_flags = 0;
@@ -228,13 +253,13 @@ char Piece::getErrorFlags() const
  std::vector<Piece*> Piece::getPieces(Chessboard& board, PlayerColor color)
  {
 	 std::vector<Piece*> piece_vec = board.getPieces();
+	 std::vector<Piece*> new_piece_vec;
 
-	std::remove_if(piece_vec.begin(), piece_vec.end(), [color](Piece* p) ->bool
-		{
-			return p->getColor() != color;
-		});
+	 for (auto it = piece_vec.begin(); it < piece_vec.end(); it++)
+		 if ((*it)->getColor() == color)
+			 new_piece_vec.push_back(*it);
 
-	return piece_vec;
+	return new_piece_vec;
 }
 
  ostream& operator<<(ostream& os, const Piece& rval)
@@ -246,19 +271,21 @@ char Piece::getErrorFlags() const
 	 rval.getColor() == WHITE ? to_print += "white " : to_print += "black ";
 
 	 if (rval.getType() == PAWN)
-		 to_print += "pawn ";
+		 to_print += "pawn";
 	 else if (rval.getType() == KNIGHT)
-		 to_print += "knight ";
+		 to_print += "knight";
 	 else if (rval.getType() == BISHOP)
-		 to_print += "bishop ";
+		 to_print += "bishop";
 	 else if (rval.getType() == ROOK)
-		 to_print += "rook ";
+		 to_print += "rook";
 	 else if (rval.getType() == KING)
-		 to_print += "king ";
+		 to_print += "king";
 	 else if (rval.getType() == QUEEN)
-		 to_print += "queen ";
+		 to_print += "queen";
 
 	 to_print += "]";
+
+	 cout << to_print;
 
 	 return os;
 

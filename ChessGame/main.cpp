@@ -20,14 +20,9 @@ void setup_board();
 
 int main()
 {
-	//setup_board();
+	setup_board();
 
-	board.putOnBoard(new Pawn(WHITE), { 0, 0 });
-	board.putOnBoard(new Knight(WHITE), { 1, 0 });
-	board.putOnBoard(new Bishop(BLACK), { 2, 0 });
-	board.putOnBoard(new Rook(BLACK), { 3, 0 });
-
-	 string player_input;
+	string player_input;
 
 	bool exit = false;
 	while (!exit)

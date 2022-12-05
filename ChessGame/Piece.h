@@ -25,9 +25,9 @@ protected:
 	vector<move> crawl(Chessboard& board, position dir, int distance = 8);
 	vector<move> check_diagonals(Chessboard& board);
 	vector<move> check_cardinals(Chessboard& board);
+
 	bool is_square_obstructed(Chessboard& board, position pos);
-	bool is_square_threatened(Chessboard& board, position pos, PlayerColor color);
-	bool check_castle(Chessboard& board, Piece* rook, Piece* king);
+	static bool check_castle(Chessboard& board, Piece* rook, Piece* king);
 
 	char error_flags;
 
@@ -41,6 +41,7 @@ public:
 	PieceType getType() const;
 	char getErrorFlags() const;
 
+	static bool is_square_threatened(Chessboard& board, position pos, PlayerColor color);
 	static std::vector<Piece*> getPieces(Chessboard& board, PlayerColor color);
 	static bool kingInCheck(Chessboard& board, PlayerColor color);
 

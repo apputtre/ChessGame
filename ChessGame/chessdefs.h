@@ -63,6 +63,11 @@ namespace chess
 			return { this->col_num - rval.col_num, this->row_num - rval.row_num };
 		}
 
+		position operator*(const int rval)
+		{
+			return { this->col_num * rval, this->row_num * rval };
+		}
+
 		void operator-=(const position& rval)
 		{
 			this->col_num -= rval.col_num;
