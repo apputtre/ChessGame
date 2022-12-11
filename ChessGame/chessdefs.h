@@ -63,10 +63,6 @@ namespace chess
 			return { this->col_num - rval.col_num, this->row_num - rval.row_num };
 		}
 
-		position operator*(const int rval)
-		{
-			return { this->col_num * rval, this->row_num * rval };
-		}
 
 		void operator-=(const position& rval)
 		{
@@ -85,6 +81,11 @@ namespace chess
 		}
 
 	};
+
+	inline position operator*(const position& lval, const int rval)
+	{
+		return { lval.col_num * rval, lval.row_num * rval };
+	}
 
 	const position North{ 0, 1 };
 	const position Northeast{ 1, 1 };
