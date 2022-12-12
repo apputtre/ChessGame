@@ -3,6 +3,7 @@
 #include "Knight.h"
 #include "Pawn.h"
 #include <regex>
+#include <algorithm>
 #include "Chessboard.h"
 #include "chessdefs.h"
 #include "Bishop.h"
@@ -12,23 +13,67 @@
 
 using namespace chess;
 
+using std::cin;
+using std::cout;
+
 Chessboard board;
 
 void print_board(Chessboard& board, Piece* show_moves_for = nullptr);
 int do_turn(string input);
 void setup_board();
+move get_cpu_move(Chessboard& board, PlayerColor cpu_player);
 
 int main()
 {
+
+	PlayerColor turn = WHITE;
+	PlayerColor cpu_player = NULL_PLAYER;
+
 	setup_board();
 
 	string player_input;
 
+	do
+	{
+		cout << "Which side would you like to play? (b/w): ";
+		getline(cin, player_input);
+		std::transform(player_input.begin(), player_input.end(), player_input.begin(), tolower);
+		if (player_input == "b" || player_input == "black")
+		{
+			cpu_player = WHITE;
+		}
+		else if (player_input == "w" || player_input == "white")
+		{
+			cpu_player = BLACK;
+		}
+		else
+		{
+			cout << "please enter w/h.\n";
+		}
+
+	} while (cpu_player == NULL_PLAYER);
+	cout << "\n";
+
+
 	bool exit = false;
 	while (!exit)
 	{
-		print_board(board);
+		if (turn == cpu_player)
+		{
+			move cpu_move = get_cpu_move(board, cpu_player);
 
+			if (cpu_move.capture)
+				board.takeOffBoard(cpu_move.captured);
+
+			board.movePiece(cpu_move.piece, cpu_move.pos_to);
+			cpu_move.piece->has_moved = true;
+
+			turn = (turn == WHITE ? BLACK : WHITE);
+			continue;
+		}
+
+
+		print_board(board);
 		cout << "\n\n";
 
 		bool player_entered_turn = false;
@@ -38,7 +83,10 @@ int main()
 			std::getline(cin, player_input);
 
 			player_entered_turn = !do_turn(player_input);
+
 		}
+
+		turn = (turn == WHITE ? BLACK : WHITE);
 
 		cout << "\n";
 	}
@@ -130,7 +178,6 @@ int do_turn(string player_input)
 
 	if (std::regex_match(player_input, matches, input_exp_move))
 	{
-		// matches[0] contains the full input (for some reason)
 		position src_pos = { matches[1].str()[0] - 'a', matches[2].str()[0] - '1'};
 		position dest_pos = { matches[3].str()[0] - 'a', matches[4].str()[0] - '1' };
 
@@ -193,8 +240,6 @@ int do_turn(string player_input)
 	}
 	else if (std::regex_match(player_input, matches, input_exp_debug))
 	{
-		// matches[0] contains the full input (for some reason)
-
 		string command = matches[1].str();
 		position pos = position{ matches[2].str()[0] - 'a', matches[3].str()[0] - '1' };
 
@@ -255,4 +300,18 @@ void setup_board()
 	board.putOnBoard(new Rook(BLACK), { 7, 7 });
 	// black pawns
 	for (int i = 0; i < 8; board.putOnBoard(new Pawn(BLACK), { i++, 6 })) {}
+}
+
+move get_cpu_move(Chessboard& board, PlayerColor cpu_player)
+{
+	std::vector<move> available_moves;
+	std::vector<Piece*> my_pieces = Piece::getPieces(board, cpu_player);
+	for (auto iter_piece = my_pieces.begin(); iter_piece < my_pieces.end(); iter_piece++)
+	{
+		std::vector<move> to_insert = (*iter_piece)->getMoves(board);
+		available_moves.insert(available_moves.begin(), to_insert.begin(), to_insert.end());
+	}
+	srand(time(NULL));
+	int r = rand() % available_moves.size();
+	return available_moves[r];
 }
